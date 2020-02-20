@@ -6,10 +6,12 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.giffgaff.controller.StudentController;
 import com.giffgaff.dao.StudDao;
 import com.giffgaff.model.SortByMarks;
 import com.giffgaff.model.Student;
@@ -17,6 +19,7 @@ import com.giffgaff.serviceImpl.StudServiceImpl;
 @Repository
 public class StudDaoImpl implements	StudDao{
 
+	private static final Logger LOGGER = Logger.getLogger(StudDaoImpl.class.getName());
 	@Autowired
 	MysqlConnection mysqlConnection;
 	
@@ -27,10 +30,14 @@ public class StudDaoImpl implements	StudDao{
 	Student stud;
 	
 	
-//This method will insert the student details to database
+
+	/**
+	 *This method will insert the student details to database
+	 *@param student
+	 *@return status
+	 */
 	@Override
 	public int insertData(Student student) {
-		// TODO Auto-generated method stub
 		 int status=0;  
 	        try{  
 	            Connection conn=mysqlConnection.getConnection();  
@@ -42,16 +49,22 @@ public class StudDaoImpl implements	StudDao{
 	            status=ps.executeUpdate();  
 	              
 	            mysqlConnection.closeConnection();  
-	        }catch(Exception ex){ex.printStackTrace();}  
+	        }catch(Exception ex){
+	        	System.err.println(ex.getMessage()); 
+	        	}  
 	          
 	        return status; 
 	}
 
 	
-	//This method will fetch data of all students and sort it as per total marks scored in desc order	
+		
+	/**
+	 * This method will fetch data of all students and sort it as per total marks scored in desc order
+	 *@param 
+	 *@return List student
+	 */
 	@Override
 	public List<Student> fetchData() {
-		// TODO Auto-generated method stub
 		List<Student> studentList = new ArrayList<Student>();
 		
 		try {
@@ -74,18 +87,21 @@ public class StudDaoImpl implements	StudDao{
 			 * System.out.println(studentList.get(i).getName()); }
 			 */
     		mysqlConnection.closeConnection();
-	}catch(Exception e){ 
-		System.out.println(e);
+	}catch(Exception ex){ 
+		System.err.println(ex.getMessage()); 
 	}
 		
 		return studentList;
 		
 	}
 
-	//This method will search the student details in database	
+	/**
+	 * This method will search the student details in database	
+	 *@param id
+	 *@return student
+	 */
 	@Override
 	public Student getStudDetail(int id) {
-		// TODO Auto-generated method stub
 		try {
 		Connection conn=mysqlConnection.getConnection();
 		PreparedStatement ps=conn.prepareStatement("select * from student where stud_id=?");  
@@ -104,16 +120,20 @@ public class StudDaoImpl implements	StudDao{
 		service.DeseializeStudent();
 		mysqlConnection.closeConnection();
 		
-		}catch(Exception e){ 
-			System.out.println(e);
+		}catch(Exception ex){ 
+			System.err.println(ex.getMessage()); 
 		}
 		
 		return stud;
 	}
-	//This method will search the highest score student and serialize the details to file
+	
+	/**
+	 *This method will search the highest score student and serialize the details to file	
+	 *@param 
+	 *@return student
+	 */
 	@Override
 	public Student highestMarksStud() {
-		// TODO Auto-generated method stub
 		try {
 			Connection conn=mysqlConnection.getConnection();
 			PreparedStatement ps=conn.prepareStatement("select * from student order by total_marks desc limit 1");  
@@ -127,8 +147,8 @@ public class StudDaoImpl implements	StudDao{
 			//System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));  
 			}
 			mysqlConnection.closeConnection();
-		}catch(Exception e){ 
-			System.out.println(e);
+		}catch(Exception ex){ 
+			System.err.println(ex.getMessage()); 
 		}
 		
 		return stud;

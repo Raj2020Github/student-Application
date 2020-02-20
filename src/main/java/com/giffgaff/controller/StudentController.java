@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ public class StudentController {
 
 	@RequestMapping("/studentApp")
 	public String welcomeUser(Model model) {
+		
 		System.out.println(" ===================================================================");
 		System.out.println(" *************** WELCOME TO STUDENT DATA MANAGEMENT  *************** ");
 		System.out.println(" ===================================================================");
@@ -36,8 +38,8 @@ public class StudentController {
 		System.out.println(" ===================================================================\n");
 		
 		Scanner in = new Scanner(System.in);
-
-		int option = Integer.parseInt(in.next());
+		int option = in.nextInt();
+		//int option = !StringUtils.isNumeric(in.next()) ? -1 :  Integer.parseInt(in.next());
 
 		switch (option) {
 		case 1:
@@ -50,35 +52,31 @@ public class StudentController {
 			getAllStudentData();
 			break;
 		case 4:
-
 			getTopStudent();
 			break;
-
 		default:
-			System.out.println("Please Select Required Option");
+			System.out.println("XXXXX Sorry, Wrong input! Please Enter Right Option(1 to 4 Only)!!! XXXXX \n =XXX= END =XXX=");
 			break;
 		}
 
 		model.addAttribute("name", "WELCOME TO STUDENT APPLICATION");
 		return "Success";
-
 	}
 
+	/**
+	 * It will add student in to database
+	 */
 	public void addStudent() {
-
 		
-		System.out.println("******** ADD Student Details Here  ********");
+		System.out.println("******** ADD New Student Details Here  ********");
 		Scanner in = new Scanner(System.in);
-		// LOGGER.info("Enter Student ID: ");
-		// String stud_id = in.nextLine();
-
+		
 		System.out.println("Enter Student Name ==> ");
 		String name = in.nextLine();
 
 		System.out.println("Enter Student Total Marks ==> ");
 		String total_marks = in.nextLine();
 
-		// student.setStud_id(Integer.parseInt(stud_id));
 		student.setName(name);
 		student.setTotal_marks(total_marks);
 		int status = studservice.insertData(student);
@@ -86,34 +84,37 @@ public class StudentController {
 			System.out.println("******** Successfully Inserted  !!! ********");
 		
 	}
-
+	
+	/**
+	 * It will get all the students data from database
+	 */
 	public void getAllStudentData() {
 		System.out.println("******** ALL THE STUDENT DETAILS  ********");
 
 		List<Student> students = studservice.fetchData();
 
-		System.out.println(" SID\t" + "SName\t\t" + "Marks\t");
+		System.out.println(" SID\t" + "SName\t " + " Marks\t");
 		System.out.println(" ================================");
 
 		students.stream().forEach(student -> System.out
-				.print(student.getStud_id() + "\t" + student.getName() + "\t\t" + student.getTotal_marks() + "\n"));
+				.print(student.getStud_id() + "\t" + student.getName() + "\t  " + student.getTotal_marks() + "\n"));
 
-//		  for (Student student : students) {
-//			System.out.print(student.getStud_id()+"\t"+student.getName()+"\t"+student.getTotal_marks());
-//			System.out.println();
-//		}
+
 		System.out.println(" ================================");
 		System.out.println("******** ALL THE STUDENT DETAILS  ********");
 
 	}
-
+	
+	/**
+	 * It will get the top scored student data from database
+	 */
 	public void getTopStudent() {
 
 		System.out.println("******** HIGHEST MARKS STUDENT ********");
 
 		Student topStudent = studservice.highestMarksStudent();
 
-		System.out.println(" SID\t" + "SName\t\t" + "Marks\t");
+		System.out.println(" SID\t" + "SName\t" + "Marks\t");
 		System.out.println(" ================================");
 		System.out.print(topStudent.getStud_id() + "\t" + topStudent.getName() + "\t\t" + topStudent.getTotal_marks() + "\n");
 		System.out.println(" ================================");
@@ -122,6 +123,9 @@ public class StudentController {
 		System.out.println("\n Student Details Has Been Serialized !!");
 	}
 
+	/**
+	 * It will get the required student data from database
+	 */
 	public void getStudent() {
 		System.out.println("******** SEARCH Student  ********");
 		System.out.println("Please enter student ID which you want to search :");

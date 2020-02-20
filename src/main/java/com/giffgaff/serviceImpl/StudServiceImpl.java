@@ -58,7 +58,9 @@ public class StudServiceImpl implements StudService {
 		out.flush();  
 		out.close();  //closing the stream  
 		//System.out.println("success");  
-		}catch(Exception e){System.out.println(e);}
+		}catch(Exception ex){
+			System.out.println(ex.getMessage());
+			}
 	}
 
 	@Override
